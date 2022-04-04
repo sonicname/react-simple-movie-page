@@ -24,7 +24,7 @@ const HomePage = () => {
         <h2 className="capitalize text-white mb-5 text-3xl font-bold">
           Trending
         </h2>
-        ]<MovieList type={"popular"} />
+        <MovieList type={"popular"} />
       </section>
     </React.Fragment>
   );
