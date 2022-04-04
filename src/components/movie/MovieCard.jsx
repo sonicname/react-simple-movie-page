@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const MovieCard = ({ title, release_date, vote_average, poster_path }) => {
+const MovieCard = ({ title, release_date, vote_average, poster_path, id }) => {
+  const navigate = useNavigate();
   return (
     <div className="movie-card flex flex-col rounded-lg p-3 bg-slate-800 text-white h-full select-none">
       <img
@@ -16,7 +18,10 @@ const MovieCard = ({ title, release_date, vote_average, poster_path }) => {
           <span>{vote_average}</span>
         </div>
 
-        <button className="py-3 px-6 rounded-lg capitalize bg-primary w-full mt-auto">
+        <button
+          onClick={() => navigate(`/movie/${id}`)}
+          className="py-3 px-6 rounded-lg capitalize bg-primary w-full mt-auto"
+        >
           Watch Now
         </button>
       </div>
