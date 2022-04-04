@@ -1,13 +1,30 @@
 import React from "react";
 import useSWR from "swr";
-import { fetcher } from "../config/config";
+import { apiKey, fetcher } from "../config/config";
 import MovieCard from "../components/movie/MovieCard";
+import useDebounce from "../hooks/useDebounce";
 
 const MoviePage = () => {
-  const { data, error } = useSWR(
-    `https://api.themoviedb.org/3/movie/popular?api_key=76af01268d250bba0f6f661ab1fbe260`,
-    fetcher
+  const [filter, setFilter] = React.useState("");
+  const [url, setUrl] = React.useState(
+    `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`
   );
+  const filterDebounce = useDebounce(filter, 1000);
+  const handleFilterChange = (e) => {
+    setFilter(e.target.value);
+  };
+
+  const { data, error } = useSWR(url, fetcher);
+
+  React.useEffect(() => {
+    if (filterDebounce) {
+      setUrl(
+        `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${filterDebounce}`
+      );
+    } else {
+      setUrl(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`);
+    }
+  }, [filterDebounce]);
   const movies = data?.results || [];
   return (
     <div className="py-10 page-container">
@@ -17,6 +34,7 @@ const MoviePage = () => {
             type="text"
             className="w-full p-4 bg-slate-800 text-white outline-none"
             placeholder="Type here to search..."
+            onChange={handleFilterChange}
           />
         </div>
         <button className="p-4 bg-primary text-white">
@@ -40,6 +58,7 @@ const MoviePage = () => {
         {movies.length > 0 &&
           movies.map((movie) => (
             <MovieCard
+              key={movie.id}
               title={movie.title}
               release_date={movie.release_date}
               vote_average={movie.vote_average}
