@@ -1,30 +1,33 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import "swiper/scss";
 import { Routes, Route } from "react-router-dom";
 import Main from "./components/layout/Main";
-import HomePage from "./page/HomePage";
 import Banner from "./components/banner/Banner";
-import MoviePage from "./page/MoviePage";
-import MovieDetails from "./page/MovieDetails";
+
+const HomePage = lazy(() => import("./page/HomePage"));
+const MoviePage = lazy(() => import("./page/MoviePage"));
+const MovieDetails = lazy(() => import("./page/MovieDetails"));
 
 const App = () => {
   return (
     <React.Fragment>
-      <Routes>
-        <Route element={<Main />}>
-          <Route
-            path="/"
-            element={
-              <React.Fragment>
-                <Banner />
-                <HomePage />
-              </React.Fragment>
-            }
-          />
-          <Route path="/movies" element={<MoviePage />} />
-          <Route path="/movie/:movieID" element={<MovieDetails />} />
-        </Route>
-      </Routes>
+      <Suspense fallback={<React.Fragment />}>
+        <Routes>
+          <Route element={<Main />}>
+            <Route
+              path="/"
+              element={
+                <React.Fragment>
+                  <Banner />
+                  <HomePage />
+                </React.Fragment>
+              }
+            />
+            <Route path="/movies" element={<MoviePage />} />
+            <Route path="/movie/:movieID" element={<MovieDetails />} />
+          </Route>
+        </Routes>
+      </Suspense>
     </React.Fragment>
   );
 };
