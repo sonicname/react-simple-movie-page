@@ -1,6 +1,6 @@
 import React from "react";
 import useSWR from "swr";
-import { apiKey, fetcher } from "../config/config";
+import { fetcher, tmdbAPI } from "../config/config";
 import MovieCard from "../components/movie/MovieCard";
 import useDebounce from "../hooks/useDebounce";
 import ReactPaginate from "react-paginate";
@@ -12,7 +12,7 @@ const MoviePage = () => {
   const [nextPage, setNextPage] = React.useState(1);
   const [filter, setFilter] = React.useState("");
   const [url, setUrl] = React.useState(
-    `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&page=${nextPage}`
+    tmdbAPI.getMovieListWithPage("popular", nextPage)
   );
   const filterDebounce = useDebounce(filter, 1000);
   const handleFilterChange = (e) => {
@@ -22,13 +22,9 @@ const MoviePage = () => {
   const loading = !data && !error;
   React.useEffect(() => {
     if (filterDebounce) {
-      setUrl(
-        `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${filterDebounce}&page=${nextPage}`
-      );
+      setUrl(tmdbAPI.getMovieWithQuery(filterDebounce, nextPage));
     } else {
-      setUrl(
-        `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&page=${nextPage}`
-      );
+      setUrl(tmdbAPI.getMovieListWithPage("popular", nextPage));
     }
   }, [filterDebounce, nextPage]);
 

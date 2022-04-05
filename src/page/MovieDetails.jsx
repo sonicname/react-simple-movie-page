@@ -1,20 +1,14 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import useSWR from "swr";
-import { apiKey, fetcher } from "../config/config";
+import { fetcher, tmdbAPI } from "../config/config";
 import MovieCredits from "../components/movie/MovieCredits";
 import MovieVideos from "../components/movie/MovieVideos";
 import MovieSimilar from "../components/movie/MovieSimilar";
 
-// https://api.themoviedb.org/3/movie/{movie_id}?api_key=76af01268d250bba0f6f661ab1fbe260
-
 const MovieDetails = () => {
   const { movieID } = useParams();
-
-  const { data, error } = useSWR(
-    `https://api.themoviedb.org/3/movie/${movieID}?api_key=${apiKey}`,
-    fetcher
-  );
+  const { data, error } = useSWR(tmdbAPI.getMovieDetail(movieID), fetcher);
   if (!data) return null;
   const { backdrop_path, poster_path, title, genres, overview } = data;
 
@@ -25,14 +19,14 @@ const MovieDetails = () => {
         <div
           className="w-full h-full bg-cover bg-no-repeat"
           style={{
-            backgroundImage: `url(https://image.tmdb.org/t/p/original${backdrop_path})`,
+            backgroundImage: `url(${tmdbAPI.getImageOriginal(backdrop_path)})`,
           }}
         />
       </div>
       <div className="w-full h-[500px] max-w-[800px] mx-auto -mt-[200px] relative z-10 pb-10">
         <img
           className="w-full h-full object-cover rounded-xl"
-          src={`https://image.tmdb.org/t/p/original${poster_path}`}
+          src={`${tmdbAPI.getImageOriginal(poster_path)}`}
           alt=""
         />
       </div>

@@ -1,17 +1,9 @@
 import React from "react";
 import useSWR from "swr";
-import { apiKey, fetcher } from "../../config/config";
-
-// https://api.themoviedb.org/3/movie/${movieID}/videos?api_key=${apiKey}
-// <iframe width="900" height="506" src="https://www.youtube.com/embed/uIKpTT5LfMU" title="YouTube video player"
-// frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope;
-// picture-in-picture" allowfullscreen></iframe>
+import { fetcher, tmdbAPI } from "../../config/config";
 
 const MovieVideos = ({ movieID }) => {
-  const { data, error } = useSWR(
-    `https://api.themoviedb.org/3/movie/${movieID}/videos?api_key=${apiKey}`,
-    fetcher
-  );
+  const { data, error } = useSWR(tmdbAPI.getMovieVideos(movieID), fetcher);
 
   if (!data) return null;
   const { results } = data;
