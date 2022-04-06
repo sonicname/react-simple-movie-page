@@ -3,6 +3,7 @@ export const fetcher = (...args) => fetch(...args).then((res) => res.json());
 const apiKey = "76af01268d250bba0f6f661ab1fbe260";
 const tmdbEndpoint = "https://api.themoviedb.org/3/movie";
 const tmdbSearchEndpoint = "https://api.themoviedb.org/3/search/movie";
+
 export const tmdbAPI = {
   getMovieList: (type = "") => `${tmdbEndpoint}/${type}?api_key=${apiKey}`,
   getMovieDetail: (movieID = "") =>

@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../button/Button";
 import { tmdbAPI } from "../../config/config";
+import LoadingSkeleton from "../loading/LoadingSkeleton";
 
 const MovieCard = ({ title, release_date, vote_average, poster_path, id }) => {
   const navigate = useNavigate();
@@ -27,6 +28,35 @@ const MovieCard = ({ title, release_date, vote_average, poster_path, id }) => {
         >
           Watch now
         </Button>
+      </div>
+    </div>
+  );
+};
+
+export const MovieCardSkeleton = () => {
+  return (
+    <div className="movie-card flex flex-col rounded-lg p-3 bg-slate-800 text-white h-full select-none">
+      <LoadingSkeleton
+        width={"100%"}
+        height={"250px"}
+        radius={"8px"}
+        className={"mb-5"}
+      />
+      <div className="flex flex-col flex-1">
+        <h3 className="text-xl font-bold mb-3">
+          <LoadingSkeleton width={"100%"} height={"20px"} />
+        </h3>
+
+        <div className="flex items-center justify-between text-sm opacity-50 mb-10">
+          <span>
+            <LoadingSkeleton width={"50px"} height={"10px"} />
+          </span>
+          <span>
+            <LoadingSkeleton width={"30px"} height={"10px"} />
+          </span>
+        </div>
+
+        <LoadingSkeleton width={"100%"} height={"45px"} radius={"6px"} />
       </div>
     </div>
   );

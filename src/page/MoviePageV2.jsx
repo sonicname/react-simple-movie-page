@@ -1,16 +1,14 @@
-import React from "react";
-import useSWR from "swr";
+import React, { useEffect } from "react";
 import { fetcher, tmdbAPI } from "../config/config";
 import MovieCard, { MovieCardSkeleton } from "../components/movie/MovieCard";
 import useDebounce from "../hooks/useDebounce";
-import ReactPaginate from "react-paginate";
 import { v4 } from "uuid";
+import useSWRInfinite from "swr/infinite";
+import Button from "../components/button/Button";
 
 const itemsPerPage = 20;
 
-const MoviePage = () => {
-  const [pageCount, setPageCount] = React.useState(0);
-  const [itemOffset, setItemOffset] = React.useState(0);
+const MoviePageV2 = () => {
   const [nextPage, setNextPage] = React.useState(1);
   const [filter, setFilter] = React.useState("");
   const [url, setUrl] = React.useState(
@@ -20,28 +18,23 @@ const MoviePage = () => {
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
   };
-  const { data, error } = useSWR(url, fetcher);
+  const { data, error, size, setSize } = useSWRInfinite(
+    (index) => url.replace("page=1", `page=${index + 1}`),
+    fetcher
+  );
+  const movies = data ? data.reduce((a, b) => a.concat(b.results), []) : [];
   const loading = !data && !error;
-  React.useEffect(() => {
+  const isEmpty = data?.[0]?.results.length === 0;
+  const isReachingEnd =
+    isEmpty || (data && data[data.length - 1]?.results.length < itemsPerPage);
+
+  useEffect(() => {
     if (filterDebounce) {
       setUrl(tmdbAPI.getMovieWithQuery(filterDebounce, nextPage));
     } else {
       setUrl(tmdbAPI.getMovieListWithPage("popular", nextPage));
     }
   }, [filterDebounce, nextPage]);
-
-  const movies = data?.results || [];
-
-  React.useEffect(() => {
-    if (!data || !data.total_results) return;
-    setPageCount(Math.ceil(data.total_results / itemsPerPage));
-  }, [data, itemOffset]);
-
-  const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % data.total_results;
-    setItemOffset(newOffset);
-    setNextPage(event.selected + 1);
-  };
 
   return (
     <div className="py-10 page-container">
@@ -71,9 +64,6 @@ const MoviePage = () => {
           </svg>
         </button>
       </div>
-      {/*{loading && (*/}
-      {/*  <div className="w-10 h-10 rounded-full border-4 border-primary border-t-transparent border-t-4 mx-auto animate-spin" />*/}
-      {/*)}*/}
       {loading && (
         <div className="grid grid-cols-4 gap-10">
           {new Array(itemsPerPage).fill(0).map(() => (
@@ -96,20 +86,19 @@ const MoviePage = () => {
           ))}
       </div>
 
-      <div className="flex items-center justify-center mt-10 gap-x-5">
-        <ReactPaginate
-          breakLabel="..."
-          nextLabel="next >"
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={5}
-          pageCount={pageCount}
-          previousLabel="< previous"
-          renderOnZeroPageCount={null}
-          className="pagination"
-        />
+      <div className="mt-10 text-center">
+        <Button
+          onClick={() => (isReachingEnd ? {} : setSize(size + 1))}
+          disabled={isReachingEnd}
+          className={`${
+            isReachingEnd ? "bg-slate-300" : ""
+          } inline-block max-w-[200px]`}
+        >
+          Load more
+        </Button>
       </div>
     </div>
   );
 };
 
-export default MoviePage;
+export default MoviePageV2;

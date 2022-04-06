@@ -5,7 +5,7 @@ import Main from "./components/layout/Main";
 import Banner from "./components/banner/Banner";
 
 const HomePage = lazy(() => import("./page/HomePage"));
-const MoviePage = lazy(() => import("./page/MoviePage"));
+const MoviePageV2 = lazy(() => import("./page/MoviePageV2"));
 const MovieDetails = lazy(() => import("./page/MovieDetails"));
 
 const App = () => {
@@ -23,7 +23,7 @@ const App = () => {
                 </React.Fragment>
               }
             />
-            <Route path="/movies" element={<MoviePage />} />
+            <Route path="/movies" element={<MoviePageV2 />} />
             <Route path="/movie/:movieID" element={<MovieDetails />} />
           </Route>
         </Routes>
